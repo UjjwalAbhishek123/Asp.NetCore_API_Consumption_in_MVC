@@ -1,10 +1,10 @@
 ﻿@* giving some inline style to card *@
 <style type="text/css">
-    .card{
-        width:60%;
+    .card {
+        width: 60%;
         margin-left: 20%;
         margin-top: 5%;
-    }    
+    }
 </style>
 
 <div class="card">
@@ -18,7 +18,7 @@
             <div class="col-lg-12">
                 <div class="form-group">
                     <label>Code</label>
-                    <input class="form-control" id="txtcode"/>
+                    <input class="form-control" id="txtcode" />
                 </div>
             </div>
             <div class="col-lg-12">
@@ -59,3 +59,87 @@
     </div>
 
 </div>
+
+@* adding jQuery file *@
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+    //resolving jquery conflict
+    var js = jQuery.noConflict(true);
+
+    function SaveCustomer() {
+
+        var isProceed = true;
+        //getting values from the input controls
+
+        //selecting Html elements using jQuery with ids
+        var _code = $('#txtcode');
+        var _name = $('#txtname');
+        var _email = $('#txtemail');
+        var _phone = $('#txtphone');
+        var _creditLimit = $('#txtcreditLimit');
+        var _isActive = $('#chkactive');
+
+        //getting values for each field
+        var code = _code.val();
+        var name = _name.val();
+        var email = _email.val();
+        var phone = _phone.val();
+        var creditLimit = _creditLimit.val();
+        creditLimit = (creditLimit == '' || creditLimit == null) ? 0 : parseInt(creditLimit);
+
+        var isActive = _isActive.prop('checked');
+
+        //validation for name and code
+        if (code == null || code == '') {
+            _code.css('border-color', 'red');
+            isProceed = false;
+        } else {
+            _code.css('border-color', '#ccc');
+        }
+
+        if (name == null || name == '') {
+            _name.css('border-color', 'red');
+        } else {
+            _name.css('border-color', '#ccc');
+        }
+
+        if (isProceed) {
+            //object to hold customer data
+            var _obj = new Object();
+
+            _obj.code = code;
+            _obj.name = name;
+            _obj.email = email;
+            _obj.phone = phone;
+            _obj.creditLimit = creditLimit;
+            _obj.isActive = isActive;
+
+            //here we will write jquery ajax for asynchronous data fetch from api
+            $.ajax({
+                type: 'POST',
+                url: 'https://localhost:7097/api/Customer/Create',
+                data: JSON.stringify(_obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                async: false,
+                success: function (data) {
+                    // debugger;
+
+                    //if object is getting created successfully => redirect to our listing page
+                    if (data.responseCode == 201) {
+                        window.location.href = '/customer';
+                        alert('Saved successfully.');
+                    }
+                    else{
+                        alert('Failed to save.')
+                    }
+                },
+                failure: function (error) {
+                    console.error("Error saving customer:", error);
+                }
+            })
+        }
+    }
+</script>
