@@ -15,8 +15,9 @@ namespace LearnApiConsumption_MVC.Controllers
             return View();
         }
 
-        public IActionResult Edit()
+        public IActionResult Edit(string code)
         {
+            ViewData["editCode"] = code;
             return View();
         }
     }

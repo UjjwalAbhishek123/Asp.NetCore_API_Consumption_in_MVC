@@ -45,7 +45,7 @@
         LoadCustomer()
     });
 
-    function LoadCustomer(){
+    function LoadCustomer() {
 
         //declare an array for tabledata
         tableData = [];
@@ -57,18 +57,21 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             async: false,
-            success: function(data){
+            success: function (data) {
                 // debugger;
-                //creating buttons for actions
-                var _edit = "<a class='btn btn-primary' onclick='FunEdit(this)'>Edit</a>"
-                var _remove = "<a class='btn btn-danger' onclick='FunRemove(this)'>Delete</a>"
-                var _action = _edit + " | " + _remove;
 
-                $.each(data, function(key, value){
+                $.each(data, function (key, value) {
+                    //creating buttons for actions
+                    var _edit = "<a class='btn btn-primary' onclick='FunEdit(this)'>Edit</a>";
+                    var _remove = "<a class='btn btn-danger' onclick='FunRemove(this)'>Delete</a>";
+
+                    //creating hidden field to capture code/id of customers
+                    var _hdn = "<input id='hdnCode' type='hidden' value='" + value.code + "'/>";
+                    var _action = _hdn + _edit + " | " + _remove;
                     tableData.push([value.code, value.name, value.email, value.phone, value.statusName, _action]);
                 })
             },
-            failure: function(error){
+            failure: function (error) {
 
             }
         })
@@ -76,5 +79,15 @@
         js('#tblcustomer').DataTable({
             data: tableData
         })
+    }
+
+    function FunEdit(element) {
+        //retrieve the value of a hidden input element from the same row in a table where a specific button was clicked
+        var code = $(element).closest('tr').find('#hdnCode').val();
+        
+        // alert(code);
+        
+        //redirect to edit page
+        window.location.href = '/customer/Edit/?code=' + code;
     }
 </script>
