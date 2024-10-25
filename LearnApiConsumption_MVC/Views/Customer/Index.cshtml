@@ -50,10 +50,19 @@
         //declare an array for tabledata
         tableData = [];
 
+        //getting JWT token to load customer data on authentication
+        var _token = localStorage.getItem('token');
+
         //here we will write jquery ajax for asynchronous data fetch from api
         $.ajax({
             type: 'GET',
             url: 'https://localhost:7097/api/Customer/GetAllCustomer',
+            
+            //including authorization header
+            headers:{
+                'Authorization': 'bearer ' + _token
+            },
+
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             // async: false,
@@ -107,11 +116,20 @@
     }
 
     function ProceedRemove(code){
+        //getting JWT token to delete customer data on authentication
+        var _token = localStorage.getItem('token');
+
         $.ajax({
             type: 'DELETE',
 
             //hitting update API
             url: 'https://localhost:7097/api/Customer/Delete?code=' + code,
+
+            //including authorization header
+            headers: {
+                'Authorization': 'bearer ' + _token
+            },
+
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             // async: false,

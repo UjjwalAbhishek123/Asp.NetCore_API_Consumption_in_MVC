@@ -69,6 +69,8 @@
     $(document).ready(function () {
         var code = $('#txtcode').val();
 
+        var _token = localStorage.getItem('token');
+        
         if (code != null && code != '') {
             //call the api
             $.ajax({
@@ -76,6 +78,11 @@
 
                 //here we're getting customer detail based on code, later on we will hit update API on saving the updated form
                 url: 'https://localhost:7097/api/Customer/GetByCode?code=' + code,
+
+                headers: {
+                    'Authorization': 'bearer ' + _token
+                },
+
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 async: false,
@@ -97,6 +104,8 @@
     })
 
     function SaveCustomer() {
+
+        var _token = localStorage.getItem('token');
 
         var isProceed = true;
         //getting values from the input controls
@@ -150,6 +159,11 @@
 
                 //hitting update API
                 url: 'https://localhost:7097/api/Customer/Update?code=' + code,
+
+                headers: {
+                    'Authorization': 'bearer ' + _token
+                },
+
                 data: JSON.stringify(_obj),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

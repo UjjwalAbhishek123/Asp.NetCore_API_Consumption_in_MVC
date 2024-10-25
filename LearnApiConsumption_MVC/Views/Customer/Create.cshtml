@@ -69,6 +69,8 @@
     var js = jQuery.noConflict(true);
 
     function SaveCustomer() {
+        
+        var _token = localStorage.getItem('token');
 
         var isProceed = true;
         //getting values from the input controls
@@ -120,6 +122,11 @@
             $.ajax({
                 type: 'POST',
                 url: 'https://localhost:7097/api/Customer/Create',
+
+                headers: {
+                    'Authorization': 'bearer ' + _token
+                },
+
                 data: JSON.stringify(_obj),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",

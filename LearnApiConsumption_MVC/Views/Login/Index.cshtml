@@ -1,7 +1,110 @@
-﻿
-@{
-    ViewData["Title"] = "Index";
-}
+﻿@* giving some inline style to card *@
+<style type="text/css">
+    .card {
+        width: 60%;
+        margin-left: 20%;
+        margin-top: 5%;
+    }
+</style>
 
-<h1>Index</h1>
+<div class="card">
+    @* it will be heading *@
+    <div class="card-header">
+        <h2>User Login</h2>
+    </div>
 
+    <div class="card-body">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input class="form-control" id="txtusername" />
+                </div>
+            </div>
+            <div class="col-lg-12">
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" class="form-control" id="txtpassword" />
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="card-footer">
+        <a class="btn btn-primary" onclick="ProceedLogin()">Login</a>
+    </div>
+
+</div>
+
+@* adding jQuery file *@
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+
+<script type="text/javascript">
+
+    //resolving jquery conflict
+    var js = jQuery.noConflict(true);
+
+    function ProceedLogin() {
+
+        var isProceed = true;
+        //getting values from the input controls
+
+        //selecting Html elements using jQuery with ids
+        var _user = $('#txtusername');
+        var _password = $('#txtpassword');
+
+        //getting values for each field
+        var user = _user.val();
+        var password = _password.val();
+
+        //validation for name and code
+        if (user == null || user == '') {
+            _user.css('border-color', 'red');
+            isProceed = false;
+        } else {
+            _user.css('border-color', '#ccc');
+        }
+
+        if (password == null || password == '') {
+            _password.css('border-color', 'red');
+        } else {
+            _password.css('border-color', '#ccc');
+        }
+
+        if (isProceed) {
+            //object to hold customer data
+            var _obj = new Object();
+
+            _obj.username = user;
+            _obj.password = password;
+
+            //here we will write jquery ajax for asynchronous data fetch from api
+            $.ajax({
+                type: 'POST',
+                url: 'https://localhost:7097/api/Authorize/GenerateToken',
+                data: JSON.stringify(_obj),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                // async: false,
+                success: function (data) {
+                    // debugger;
+
+                    //if object is getting created successfully => redirect to our listing page
+                    if (data!=null) {
+                        //storing token in local storage
+                        localStorage.setItem('token', data.token);
+
+                        window.location.href = '/customer';
+                    }
+                    else{
+                        alert('Failed to save.')
+                    }
+                },
+                failure: function (error) {
+                    console.error("Error saving customer:", error);
+                }
+            })
+        }
+    }
+</script>
