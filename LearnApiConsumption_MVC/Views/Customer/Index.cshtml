@@ -56,7 +56,7 @@
             url: 'https://localhost:7097/api/Customer/GetAllCustomer',
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            async: false,
+            // async: false,
             success: function (data) {
                 // debugger;
 
@@ -69,7 +69,13 @@
                     var _hdn = "<input id='hdnCode' type='hidden' value='" + value.code + "'/>";
                     var _action = _hdn + _edit + " | " + _remove;
                     tableData.push([value.code, value.name, value.email, value.phone, value.statusName, _action]);
-                })
+                });
+
+                // Initialize DataTable only after data is fetched
+                js('#tblcustomer').DataTable({
+                    data: tableData,
+                    destroy: true // Ensures that the table can be re-initialized
+                });
             },
             failure: function (error) {
 
@@ -89,5 +95,41 @@
         
         //redirect to edit page
         window.location.href = '/customer/Edit/?code=' + code;
+    }
+
+    function FunRemove(element) {
+        //retrieve the value of a hidden input element from the same row in a table where a specific button was clicked
+        var code = $(element).closest('tr').find('#hdnCode').val();
+
+        if (confirm('Do you want to remove?')) {
+            ProceedRemove(code);
+        }
+    }
+
+    function ProceedRemove(code){
+        $.ajax({
+            type: 'DELETE',
+
+            //hitting update API
+            url: 'https://localhost:7097/api/Customer/Delete?code=' + code,
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            // async: false,
+            success: function (data) {
+                // debugger;
+
+                //if object is getting created successfully => redirect to our listing page
+                if (data.responseCode == 200) {
+                    window.location.href = '/customer';
+                    alert('Deleted successfully.');
+                }
+                else {
+                    alert('Failed to Delete.');
+                }
+            },
+            failure: function (error) {
+                console.error("Error saving customer:", error);
+            }
+        })
     }
 </script>
